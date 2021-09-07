@@ -29,7 +29,7 @@ function data()
             data.autoRemovable = false
             data.buildMode = 'SINGLE'
             data.categories = { 'building' }
-            data.lollo = 'LOLLO'
+            data.lollo = true
             data.preProcessFn = nil --function(_) end
             data.skipCollision = false
             data.skipOnInit = false
@@ -39,7 +39,7 @@ function data()
             -- LOLLO TODO do we need this?
             if type(data.upgradeFn) ~= 'function' then
                 print('LOLLO upgradeFn set')
-                data.upgradeFn = function(_) end
+                data.upgradeFn = function(_) print('LOLLO upgradeFn started') end
             end
             -- tweakAssets.hideParams(data) -- causes a crash coz certain parameters are not available to updateFn,
             -- which fires once before its tweaked version
@@ -49,20 +49,20 @@ function data()
             -- local defaultResults = data.updateFn(defaultParams)
             -- print('defaultResults =') debugPrint(defaultResults)
 
-            -- data.params[#data.params + 1] =
-            -- {
-            --     key = "lolloResCapacity",
-            --     name = _("Lollo Residents"),
-            --     uiType = "SLIDER",
-            --     values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
-            -- }
-            -- data.params[#data.params + 1] =
-            -- {
-            --     key = "lolloComCapacity",
-            --     name = _("Lollo Clients"),
-            --     uiType = "SLIDER",
-            --     values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
-            -- }
+            data.params[#data.params + 1] =
+            {
+                key = "lolloResCapacity",
+                name = _("Lollo Residents"),
+                uiType = "SLIDER",
+                values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
+            }
+            data.params[#data.params + 1] =
+            {
+                key = "lolloComCapacity",
+                name = _("Lollo Clients"),
+                uiType = "SLIDER",
+                values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
+            }
 
             local originalUpdateFn = data.updateFn
             data.updateFn = function(params)
