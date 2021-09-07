@@ -25,7 +25,7 @@ function data()
         then
             print('LOLLO loading fileName =', fileName, 'with data.type =', data.type)
             data.autoRemovable = false
-            data.buildMode = 'SINGLE'
+            data.buildMode = 'MULTI' --'SINGLE'
             data.categories = { 'building' }
             data.lollo = true
             -- data.preProcessFn = nil --function(_) end
