@@ -23,6 +23,7 @@ function data()
         if modId == '2262626670' -- different houses/buildings
         or modId == '2560352422' -- European Buildings pack 1
         then
+            -- require("mobdebug").start()
             print('LOLLO loading fileName =', fileName, 'with data.type =', data.type)
             data.autoRemovable = false
             data.buildMode = 'MULTI' --'SINGLE'
