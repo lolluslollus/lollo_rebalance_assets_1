@@ -37,7 +37,7 @@ function data()
                 water = false
             }
             -- data.upgradeFn = nil
-            -- if type(data.updateFn) ~= 'function' then return data end
+            if type(data.updateFn) ~= 'function' then return data end
 
             -- LOLLO TODO do we need this?
             -- if type(data.upgradeFn) ~= 'function' then
