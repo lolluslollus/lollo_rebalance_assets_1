@@ -37,7 +37,7 @@ function data()
                 water = false
             }
             -- data.upgradeFn = nil
-            if type(data.updateFn) ~= 'function' then return data end
+            -- if type(data.updateFn) ~= 'function' then return data end
 
             -- LOLLO TODO do we need this?
             -- if type(data.upgradeFn) ~= 'function' then
@@ -112,13 +112,23 @@ function data()
         -- end,
         runFn = function (settings, modParams)
             addModifier('loadConstruction', loadConstructionFunc)
+            -- the following do nothing
             -- addModifier(
             --     'loadConstructionCategory',
-            --     tweakAssets.getConstructionCategoryTweaked
+            --     -- tweakAssets.getConstructionCategoryTweaked
+            --     function(fileName, data)
+            --         print('LOLLO loading construction category', fileName)
+            --         print('data =') debugPrint(data)
+            --     end
             -- )
             -- addModifier(
             --     'loadConstructionMenu',
-            --     tweakAssets.getConstructionMenuTweaked
+            --     -- tweakAssets.getConstructionMenuTweaked
+            --     function(fileName, data)
+            --         print('LOLLO loading construction menu', fileName)
+            --         print('data =') debugPrint(data)
+            --     end
+
             -- )
         end,
     }
