@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "*.con": "lua",
+        "*.mdl": "lua",
+        "*.module": "lua",
+        "*.mtl": "lua"
+    },
+    "Lua.diagnostics.globals": [
+        "_",
+        "addFileFilter",
+        "game",
+        "gui",
+        "data",
+        "addModifier",
+        "debugPrint",
+        "api"
+    ]
+}
