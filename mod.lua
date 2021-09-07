@@ -44,9 +44,10 @@ function data()
             --     print('LOLLO upgradeFn set')
             --     data.upgradeFn = function(_) print('LOLLO upgradeFn started') end
             -- end
-            -- tweakAssets.hideParams(data) -- causes a crash coz certain parameters are not available to updateFn,
+
+            -- tweakAssets.hideParams(data) -- LOLLO TODO causes a crash coz certain parameters are not available to updateFn,
             -- which fires once before its tweaked version
-            -- LOLLO TODO the trouble is, the tweaked updateFn never fires with these ASSET_DEFAULT things.
+            -- the trouble is, the tweaked updateFn never fires with these ASSET_DEFAULT things.
             -- It looks like a bug in the game.
 
             -- local defaultResults = data.updateFn(defaultParams)
@@ -70,7 +71,7 @@ function data()
             local originalUpdateFn = data.updateFn
             data.updateFn = (function(params)
                 print('LOLLO tweaked updateFn starting')
-                -- _addHiddenParams(params)
+                -- tweakAssets.addHiddenParams(params) -- LOLLO TODO add this once updateFn is correctly overridden
                 -- print('LOLLO added hidden params, params =') debugPrint(params)
                 local result = originalUpdateFn(params)
                 if not(result) then return result end
