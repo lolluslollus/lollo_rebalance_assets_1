@@ -15,8 +15,6 @@ function data()
         --     end
         --     return data
         -- end
-        -- ~= means !=
-        -- if stringEndsWith(fileName, '.con') then -- different houses/buildings
         local modId = tweakAssets.getModId(fileName)
         if not (modId) then
             return data
@@ -30,17 +28,22 @@ function data()
             data.buildMode = 'SINGLE'
             data.categories = { 'building' }
             data.lollo = true
-            data.preProcessFn = nil --function(_) end
+            -- data.preProcessFn = nil --function(_) end
             data.skipCollision = false
             data.skipOnInit = false
+            data.snapping = {
+                rail = false,
+                road = false,
+                water = false
+            }
             -- data.upgradeFn = nil
             if type(data.updateFn) ~= 'function' then return data end
 
             -- LOLLO TODO do we need this?
-            if type(data.upgradeFn) ~= 'function' then
-                print('LOLLO upgradeFn set')
-                data.upgradeFn = function(_) print('LOLLO upgradeFn started') end
-            end
+            -- if type(data.upgradeFn) ~= 'function' then
+            --     print('LOLLO upgradeFn set')
+            --     data.upgradeFn = function(_) print('LOLLO upgradeFn started') end
+            -- end
             -- tweakAssets.hideParams(data) -- causes a crash coz certain parameters are not available to updateFn,
             -- which fires once before its tweaked version
             -- LOLLO TODO the trouble is, the tweaked updateFn never fires with these ASSET_DEFAULT things.
@@ -51,41 +54,42 @@ function data()
 
             data.params[#data.params + 1] =
             {
-                key = "lolloResCapacity",
-                name = _("Lollo Residents"),
-                uiType = "SLIDER",
-                values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
+                key = "lolloResComInd",
+                name = _("Lollo Clients"),
+                uiType = "BUTTON",
+                values = { _("Residential"), _("Commercial"), _("Industrial") }
             }
             data.params[#data.params + 1] =
             {
-                key = "lolloComCapacity",
-                name = _("Lollo Clients"),
+                key = "lolloCapacity",
+                name = _("Lollo Capacity"),
                 uiType = "SLIDER",
                 values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
             }
 
             local originalUpdateFn = data.updateFn
-            data.updateFn = function(params)
+            data.updateFn = (function(params)
                 print('LOLLO tweaked updateFn starting')
                 -- _addHiddenParams(params)
                 -- print('LOLLO added hidden params, params =') debugPrint(params)
                 local result = originalUpdateFn(params)
                 if not(result) then return result end
 
-                result.personCapacity = {}
-                if params.lolloResCapacity and params.lolloResCapacity > 0 then
-                    result.personCapacity = { type = "RESIDENTIAL", capacity = params.lolloResCapacity * 5, }
-                elseif params.lolloComCapacity and params.lolloComCapacity > 0 then
-                    result.personCapacity = { type = "COMMERCIAL", capacity = params.lolloComCapacity * 5, }
+                if params.lolloCapacity and params.lolloCapacity > 0 then
+                    result.personCapacity = {
+                        type = ({"RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"})[(params.lolloResComInd or 0) + 1],
+                        capacity = params.lolloCapacity * 5
+                    }
+                else
+                    result.personCapacity = {}
                 end
 
                 print('LOLLO tweaked updateFn is about to return') debugPrint(result)
 
                 return result
-            end
+            end)
             print('LOLLO updateFn set')
-
-            -- data.updateFn(tweakAssets.getDefaultParams(data)) -- this works, but it won't work anymore.
+            -- data.updateFn(tweakAssets.getDefaultParams(data)) -- this works, but it won't work during a game.
 
             return data
         end
