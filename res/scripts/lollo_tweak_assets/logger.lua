@@ -1,5 +1,5 @@
 local _constants = {
-    isExtendedLog = true -- true
+    isExtendedLog = true
 }
 
 local _util = {
@@ -7,7 +7,7 @@ local _util = {
         return _constants.isExtendedLog
     end,
 
-    print = function(whatever1, whatever2, whatever3, whatever4, whatever5, whatever6, whatever7, whatever8, whatever9, whatever10)
+    printEXP = function(whatever1, whatever2, whatever3, whatever4, whatever5, whatever6, whatever7, whatever8, whatever9, whatever10)
         if not(_constants.isExtendedLog) then return end
 
         -- rubbish, does not work
@@ -24,6 +24,12 @@ local _util = {
         -- printResult = printResult .. "\n"
 
         print(whatever1 or '', whatever2 or '', whatever3 or '', whatever4 or '', whatever5 or '', whatever6 or '', whatever7 or '', whatever8 or '', whatever9 or '', whatever10 or '')
+    end,
+
+    print = function(...)
+        if not(_constants.isExtendedLog) then return end
+
+        print(...)
     end,
 
     debugPrint = function(whatever)

@@ -1,3 +1,6 @@
+local arrayUtils = require('lollo_tweak_assets.arrayUtils')
+local logger = require('lollo_tweak_assets.logger')
+
 local helpers = {
     stringEndsWith = function(testString, endString)
         if not (endString) then
@@ -46,7 +49,7 @@ local helpers = {
                 param.yearFrom = 1800 -- make it invisible
                 param.yearTo = 1800 -- make it invisible
             end
-            print('LOLLO param =') debugPrint(param)
+            logger.print('LOLLO hiding params, current param =') logger.debugPrint(param)
         end
     end,
     addHiddenParams = function(params)
@@ -59,14 +62,21 @@ local helpers = {
     end,
 }
 
+local _paramValues = { 0, 5, 10, 15, 20, 25, 30, 40, 50, 100}
+helpers.getParamValues = function()
+    return _paramValues
+end
+
 helpers.adjustParams = function(data)
     if (not(data) or type(data.updateFn) ~= 'function') then return end
+
+    if not(data.params) then data.params = {} end
 
     helpers.hideParams(data)
     -- tweakAssets.hideParams(data)
 
     -- local defaultResults = data.updateFn(defaultParams)
-    -- print('defaultResults =') debugPrint(defaultResults)
+    -- logger.print('defaultResults =') logger.debugPrint(defaultResults)
 
     data.params[#data.params + 1] =
     {
@@ -79,8 +89,8 @@ helpers.adjustParams = function(data)
     {
         key = "lolloCapacity",
         name = _("Lollo Capacity"),
-        uiType = "SLIDER",
-        values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
+        uiType = "BUTTON",
+        values = arrayUtils.map(_paramValues, function(that) return tostring(that) end)
     }
 end
 
@@ -89,26 +99,26 @@ helpers.adjustUpdateFn = function(data)
 
     local originalUpdateFn = data.updateFn
     data.updateFn = (function(params)
-        print('LOLLO tweaked updateFn starting')
+        logger.print('LOLLO tweaked updateFn starting')
         helpers.addHiddenParams(params)
-        -- print('LOLLO added hidden params, params =') debugPrint(params)
+        -- logger.print('LOLLO added hidden params, params =') logger.debugPrint(params)
         local result = originalUpdateFn(params)
         if not(result) then return result end
 
-        if params.lolloCapacity and params.lolloCapacity > 0 then
+        if params.lolloCapacity then
             result.personCapacity = {
                 type = ({"RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"})[(params.lolloResComInd or 0) + 1],
-                capacity = params.lolloCapacity * 5
+                capacity = _paramValues[params.lolloCapacity + 1]
             }
         else
             result.personCapacity = nil
         end
 
-        print('LOLLO tweaked updateFn is about to return') debugPrint(result)
+        logger.print('LOLLO tweaked updateFn is about to return') logger.debugPrint(result)
 
         return result
     end)
-    print('LOLLO updateFn set')
+    logger.print('LOLLO updateFn set')
 end
 
 return helpers

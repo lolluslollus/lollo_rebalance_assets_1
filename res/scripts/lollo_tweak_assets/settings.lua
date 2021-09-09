@@ -1,5 +1,4 @@
 return {
-    isExtendedLog = true,
     modIds = {
         '2262626670', -- different houses/buildings
         '2591217865', -- Thomaskirche Leipzig
