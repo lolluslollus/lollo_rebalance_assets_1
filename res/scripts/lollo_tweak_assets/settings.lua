@@ -47,6 +47,6 @@ return {
         '1939688963', -- House_series_II-68
         '2510205291', -- UK Tower Block Variable Height
         '2510205703', -- UK Tower Block 2 Variable Height
-        -- '2188171677', -- urban assets - LOLLO TODO fix these, they are purely decorative
+        -- '2188171677', -- urban assets - LOLLO TODO fix these, they have no function
     }
 }
