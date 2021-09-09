@@ -1,6 +1,6 @@
 return {
     modIds = {
-        '2262626670', -- different houses/buildings
+        -- '2262626670', -- different houses/buildings -- too buggy, I made my own
         '2591217865', -- Thomaskirche Leipzig
         '2586667592', -- sports and leisure pack
         '2584111996', -- westerkerk
