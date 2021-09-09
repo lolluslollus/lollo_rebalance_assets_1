@@ -1,4 +1,4 @@
-return {
+local helpers = {
     stringEndsWith = function(testString, endString)
         if not (endString) then
             return true
@@ -59,76 +59,56 @@ return {
     end,
 }
 
---[[ return {
-    getConstructionTweaked = function(fileName, data)
-    -- ~= means !=
-    -- if stringEndsWith(fileName, '.con') then -- different houses/buildings
-        local modelId = getModId(fileName)
-        if not (modelId) then
-            return data
+helpers.adjustParams = function(data)
+    if (not(data) or type(data.updateFn) ~= 'function') then return end
+
+    helpers.hideParams(data)
+    -- tweakAssets.hideParams(data)
+
+    -- local defaultResults = data.updateFn(defaultParams)
+    -- print('defaultResults =') debugPrint(defaultResults)
+
+    data.params[#data.params + 1] =
+    {
+        key = "lolloResComInd",
+        name = _("Lollo Clients"),
+        uiType = "BUTTON",
+        values = { _("Residential"), _("Commercial"), _("Industrial") }
+    }
+    data.params[#data.params + 1] =
+    {
+        key = "lolloCapacity",
+        name = _("Lollo Capacity"),
+        uiType = "SLIDER",
+        values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
+    }
+end
+
+helpers.adjustUpdateFn = function(data)
+    if (not(data) or type(data.updateFn) ~= 'function') then return end
+
+    local originalUpdateFn = data.updateFn
+    data.updateFn = (function(params)
+        print('LOLLO tweaked updateFn starting')
+        helpers.addHiddenParams(params)
+        -- print('LOLLO added hidden params, params =') debugPrint(params)
+        local result = originalUpdateFn(params)
+        if not(result) then return result end
+
+        if params.lolloCapacity and params.lolloCapacity > 0 then
+            result.personCapacity = {
+                type = ({"RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"})[(params.lolloResComInd or 0) + 1],
+                capacity = params.lolloCapacity * 5
+            }
+        else
+            result.personCapacity = nil
         end
 
-        if modelId == '2262626670' then
-            -- data.categories = { 'building' }
-            -- data.skipCollision = false
+        print('LOLLO tweaked updateFn is about to return') debugPrint(result)
 
-            if data.updateFn then
-                -- _hideParams(data) -- causes a crash coz certain parameters are not available to updateFn,
-                -- which fires once before its tweaked version
-                -- LOLLO TODO the trouble is, the tweaked updateFn never fires
+        return result
+    end)
+    print('LOLLO updateFn set')
+end
 
-                -- local defaultResults = data.updateFn(defaultParams)
-                -- print('defaultResults =') debugPrint(defaultResults)
-
-                -- if (defaultResults and not(defaultResults.personCapacity)) then
-                    -- data.params[#data.params + 1] =
-                    -- {
-                    --     key = "lolloResCapacity",
-                    --     name = _("Lollo Residents"),
-                    --     uiType = "SLIDER",
-                    --     values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
-                    -- }
-                    -- data.params[#data.params + 1] =
-                    -- {
-                    --     key = "lolloComCapacity",
-                    --     name = _("Lollo Clients"),
-                    --     uiType = "SLIDER",
-                    --     values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
-                    -- }
-                -- end
-
-                local originalUpdateFn = data.updateFn
-                data.updateFn = function(params)
-                    print('LOLLO tweaked updateFn starting')
-                    -- _addHiddenParams(params)
-
-                    -- print('LOLLO added hidden params, params =') debugPrint(params)
-
-                    -- local originalResults = originalUpdateFn(params, scriptParams)
-                    local result = originalUpdateFn(params)
-                    result = {} -- LOLLO TODO remove after testing
-                    result.personCapacity = {}
-                    if params.lolloResCapacity and params.lolloResCapacity > 0 then
-                        result.personCapacity = { type = "RESIDENTIAL", capacity = params.lolloResCapacity * 5, }
-                    elseif params.lolloComCapacity and params.lolloComCapacity > 0 then
-                        result.personCapacity = { type = "COMMERCIAL", capacity = params.lolloComCapacity * 5, }
-                    end
-
-                    print('LOLLO tweaked updateFn is about to return') debugPrint(result)
-
-                    return result
-                end
-
-                data.upgradeFn = function(_)
-                    print('LOLLO tweaked upgradeFn starting')
-                    -- return {}
-                end
-            end
-
-            return data
-        end
-    -- end
-
-        return data
-    end
-} ]]
+return helpers

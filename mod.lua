@@ -1,5 +1,8 @@
 function data()
+    local mySettings = require('lollo_tweak_assets.settings')
+    local stringUtils = require('lollo_tweak_assets.stringUtils')
     local tweakAssets = require('lollo_tweak_assets.tweakAssets')
+
     local function loadConstructionFunc(fileName, data)
         -- the following works, the same with ASSET_DEFAULT does not
         -- if data.type == 'TOWN_BUILDING' then
@@ -20,9 +23,7 @@ function data()
             return data
         end
 
-        if modId == '2262626670' -- different houses/buildings
-        or modId == '2560352422' -- European Buildings pack 1
-        then
+        if stringUtils.arrayHasValue(mySettings.modIds, modId) then
             -- require("mobdebug").start()
             print('LOLLO loading fileName =', fileName, 'with data.type =', data.type)
             data.autoRemovable = false
@@ -32,69 +33,19 @@ function data()
             -- data.preProcessFn = nil --function(_) end
             data.skipCollision = false
             data.skipOnInit = false
-            data.snapping = {
-                rail = false,
-                road = false,
-                water = false
-            }
+            -- data.snapping = {
+            --     rail = false,
+            --     road = false,
+            --     water = false
+            -- }
             -- data.upgradeFn = nil
-            if type(data.updateFn) ~= 'function' then return data end
+            tweakAssets.adjustParams(data)
 
-            -- LOLLO TODO do we need this?
-            -- if type(data.upgradeFn) ~= 'function' then
-            --     print('LOLLO upgradeFn set')
-            --     data.upgradeFn = function(_) print('LOLLO upgradeFn started') end
-            -- end
-
-            -- tweakAssets.hideParams(data) -- LOLLO TODO causes a crash coz certain parameters are not available to updateFn,
-            -- which fires once before its tweaked version
-            -- the trouble is, the tweaked updateFn never fires with these ASSET_DEFAULT things.
-            -- It looks like a bug in the game.
-
-            -- local defaultResults = data.updateFn(defaultParams)
-            -- print('defaultResults =') debugPrint(defaultResults)
-
-            data.params[#data.params + 1] =
-            {
-                key = "lolloResComInd",
-                name = _("Lollo Clients"),
-                uiType = "BUTTON",
-                values = { _("Residential"), _("Commercial"), _("Industrial") }
-            }
-            data.params[#data.params + 1] =
-            {
-                key = "lolloCapacity",
-                name = _("Lollo Capacity"),
-                uiType = "SLIDER",
-                values = { _("0"), _("5"), _("10"), _("15"), _("20"), _("25"),  _("30"),  _("35"),  _("40"),  _("45"),  _("50"), }
-            }
-
-            local originalUpdateFn = data.updateFn
-            data.updateFn = (function(params)
-                print('LOLLO tweaked updateFn starting')
-                -- tweakAssets.addHiddenParams(params) -- LOLLO TODO add this once updateFn is correctly overridden
-                -- print('LOLLO added hidden params, params =') debugPrint(params)
-                local result = originalUpdateFn(params)
-                if not(result) then return result end
-
-                if params.lolloCapacity and params.lolloCapacity > 0 then
-                    result.personCapacity = {
-                        type = ({"RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"})[(params.lolloResComInd or 0) + 1],
-                        capacity = params.lolloCapacity * 5
-                    }
-                else
-                    result.personCapacity = {}
-                end
-
-                print('LOLLO tweaked updateFn is about to return') debugPrint(result)
-
-                return result
-            end)
-            print('LOLLO updateFn set')
+            -- tweakAssets.adjustUpdateFn(data) -- LOLLO TODO UG TODO add this once updateFn is correctly overridden.
+            -- until then, we override game.config.ConstructWithModules, which works instead.
             -- data.updateFn(tweakAssets.getDefaultParams(data)) -- this works, but it won't work during a game.
-
-            return data
         end
+
         return data
     end
 
@@ -108,9 +59,6 @@ function data()
             tags = {'Europe', 'Script Mod', 'Buildings' },
             authors = {{name = 'Lollus', role = 'CREATOR'}}
         },
-        -- postRunFn = function(settings, params)
-        --     tweakAssets.tweak(settings, params)
-        -- end,
         runFn = function (settings, modParams)
             addModifier('loadConstruction', loadConstructionFunc)
             -- the following do nothing
@@ -131,6 +79,30 @@ function data()
             --     end
 
             -- )
+            local original = game.config.ConstructWithModules
+            game.config.ConstructWithModules = function(params)
+                if params and params.constrParams and params.constrParams.lolloCapacity then
+                    if (mySettings.isExtendedLog) then print('LOLLO ConstructWithModules starting') end
+                    tweakAssets.addHiddenParams(params.constrParams)
+                    local result = original(params)
+                    -- print('LOLLO ConstructWithModules TWO')
+
+                    if params.constrParams.lolloCapacity > 0 then
+                        if (mySettings.isExtendedLog) then print('LOLLO ConstructWithModules TWO') end
+                        result.personCapacity = {
+                            type = ({"RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"})[(params.constrParams.lolloResComInd or 0) + 1],
+                            capacity = params.constrParams.lolloCapacity * 5
+                        }
+                    else
+                        if (mySettings.isExtendedLog) then print('LOLLO ConstructWithModules THREE') end
+                        result.personCapacity = nil
+                    end
+
+                    return result
+                else
+                    return original(params)
+                end
+            end
         end,
     }
 end
