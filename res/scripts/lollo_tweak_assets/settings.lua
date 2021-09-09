@@ -30,7 +30,7 @@ return {
         '2125770168', -- House series II-67-Tishinskaya tower
         '2125833090', -- House series I-700
         '2021752763', -- Tool shop
-        '2020020521', -- Series 1-335 house
+        '2020020521', -- Series 1-335 house -- this is the only one that outputs colliders
         '2019578161', -- project_1X-01-15
         '2019053493', -- Model department stores. Series 2-07
         '2018605575', -- series 1-201 houses.
