@@ -121,4 +121,25 @@ helpers.adjustUpdateFn = function(data)
     logger.print('LOLLO updateFn set')
 end
 
+helpers.adjustGameConfig = function()
+    local original = game.config.ConstructWithModules
+    game.config.ConstructWithModules = function(params)
+        if params and params.constrParams and params.constrParams.lolloCapacity then
+            logger.print('LOLLO ConstructWithModules starting')
+            helpers.addHiddenParams(params.constrParams)
+            local result = original(params)
+
+            result.personCapacity = {
+                type = ({"RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"})[(params.constrParams.lolloResComInd or 0) + 1],
+                capacity = helpers.getParamValues()[params.constrParams.lolloCapacity + 1]
+            }
+            logger.print('LOLLO ConstructWithModules set capacity to') logger.debugPrint(result.personCapacity)
+
+            return result
+        else
+            return original(params)
+        end
+    end
+end
+
 return helpers
