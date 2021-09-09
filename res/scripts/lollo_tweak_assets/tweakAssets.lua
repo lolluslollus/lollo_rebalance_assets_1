@@ -80,13 +80,6 @@ helpers.adjustParams = function(data)
         uiType = "BUTTON",
         values = arrayUtils.map(_paramValues, function(that) return tostring(that) end)
     }
-    -- data.params[#data.params + 1] = -- only one building mod uses this (the houses 335), so we leave it
-    -- {
-    --     key = "lolloIsRemoveColliders",
-    --     name = _("Lollo remove colliders"),
-    --     uiType = "BUTTON",
-    --     values = { _("No"), _("Yes") }
-    -- }
 end
 
 helpers.adjustUpdateFn = function(data)
@@ -109,10 +102,7 @@ helpers.adjustUpdateFn = function(data)
             result.personCapacity = nil
         end
 
-        -- if params.constrParams.lolloIsRemoveColliders == 1 then
-        --     result.colliders = nil
-        --     logger.print('LOLLO ConstructWithModules set the colliders to nil')
-        -- end
+        result.colliders = {} -- only one building mod outputs colliders (the houses 335)
 
         logger.print('LOLLO tweaked updateFn is about to return') logger.debugPrint(result)
 
@@ -135,10 +125,8 @@ helpers.adjustGameConfig = function()
             }
             logger.print('LOLLO ConstructWithModules set the capacity to') logger.debugPrint(result.personCapacity)
 
-            -- if params.constrParams.lolloIsRemoveColliders == 1 then
-            --     result.colliders = nil
-            --     logger.print('LOLLO ConstructWithModules set the colliders to nil')
-            -- end
+            result.colliders = {} -- only one building mod outputs colliders (the houses 335)
+            -- result.colliders = nil -- seems the same as {}
 
             return result
         else

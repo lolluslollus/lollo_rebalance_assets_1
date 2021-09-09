@@ -32,7 +32,8 @@ function data()
             data.categories = { 'building' }
             data.lollo = true
             -- data.preProcessFn = nil --function(_) end
-            -- data.skipCollision = false -- LOLLO TODO MAYBE for each con, add itself with this set to false and another one set to true,
+            data.skipCollision = false
+            -- LOLLO TODO MAYBE for each con, add itself with this set to false and another one set to true,
             -- maybe split in two categories
             data.skipOnInit = false
             -- data.snapping = {
