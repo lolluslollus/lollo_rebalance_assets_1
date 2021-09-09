@@ -2,18 +2,6 @@ local arrayUtils = require('lollo_tweak_assets.arrayUtils')
 local logger = require('lollo_tweak_assets.logger')
 
 local helpers = {
-    stringEndsWith = function(testString, endString)
-        if not (endString) then
-            return true
-        end
-        if not (testString) then
-            return false
-        end
-        return string.sub(testString, -(#endString)) == endString
-    end,
-    stringContains = function(testString, containedString)
-        return not (not (string.find(testString, containedString)))
-    end,
     getModId = function(fileName)
         -- fileName = "C:/Program Files (x86)/Steam/steamapps/workshop/content/1066780/1943176647/res/config/multiple_unit/oppie_ns_icm_icm3.lua"
         local separatorString = 'workshop/content/1066780/'
@@ -92,6 +80,13 @@ helpers.adjustParams = function(data)
         uiType = "BUTTON",
         values = arrayUtils.map(_paramValues, function(that) return tostring(that) end)
     }
+    -- data.params[#data.params + 1] = -- only one building mod uses this (the houses 335), so we leave it
+    -- {
+    --     key = "lolloIsRemoveColliders",
+    --     name = _("Lollo remove colliders"),
+    --     uiType = "BUTTON",
+    --     values = { _("No"), _("Yes") }
+    -- }
 end
 
 helpers.adjustUpdateFn = function(data)
@@ -114,6 +109,11 @@ helpers.adjustUpdateFn = function(data)
             result.personCapacity = nil
         end
 
+        -- if params.constrParams.lolloIsRemoveColliders == 1 then
+        --     result.colliders = nil
+        --     logger.print('LOLLO ConstructWithModules set the colliders to nil')
+        -- end
+
         logger.print('LOLLO tweaked updateFn is about to return') logger.debugPrint(result)
 
         return result
@@ -133,7 +133,12 @@ helpers.adjustGameConfig = function()
                 type = ({"RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"})[(params.constrParams.lolloResComInd or 0) + 1],
                 capacity = helpers.getParamValues()[params.constrParams.lolloCapacity + 1]
             }
-            logger.print('LOLLO ConstructWithModules set capacity to') logger.debugPrint(result.personCapacity)
+            logger.print('LOLLO ConstructWithModules set the capacity to') logger.debugPrint(result.personCapacity)
+
+            -- if params.constrParams.lolloIsRemoveColliders == 1 then
+            --     result.colliders = nil
+            --     logger.print('LOLLO ConstructWithModules set the colliders to nil')
+            -- end
 
             return result
         else

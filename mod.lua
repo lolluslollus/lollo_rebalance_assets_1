@@ -32,7 +32,7 @@ function data()
             data.categories = { 'building' }
             data.lollo = true
             -- data.preProcessFn = nil --function(_) end
-            data.skipCollision = false
+            -- data.skipCollision = false
             data.skipOnInit = false
             -- data.snapping = {
             --     rail = false,
