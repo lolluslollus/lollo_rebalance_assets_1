@@ -47,6 +47,21 @@ function data()
             -- tweakAssets.adjustUpdateFn(data) -- LOLLO TODO UG TODO add this once updateFn is correctly overridden.
             -- until then, we override game.config.ConstructWithModules, which works instead.
             -- data.updateFn(tweakAssets.getDefaultParams(data)) -- this works, but it won't work during a game.
+
+            return data
+        end
+
+        if stringUtils.arrayHasValue(mySettings.lmgModIds, modId) then
+            logger.print('LOLLO loading fileName =', fileName, 'with data.type =', data.type)
+            data.autoRemovable = false
+            data.buildMode = 'MULTI' --'SINGLE'
+            -- data.categories = { 'building' } -- with these mods, we leave the original category
+            data.lollo = true
+            data.skipCollision = false
+            data.skipOnInit = false
+            tweakAssets.adjustParams(data)
+
+            return data
         end
 
         return data
