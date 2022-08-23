@@ -77,7 +77,7 @@ function data()
             tags = {'Europe', 'Script Mod', 'Buildings' },
             authors = {{name = 'Lollus', role = 'CREATOR'}}
         },
-        runFn = function (settings, modParams)
+        runFn = function (settings)
             addModifier('loadConstruction', loadConstructionFunc)
             -- the following do nothing
             -- addModifier(
